@@ -293,6 +293,17 @@ public class AuthenticationActivity extends Activity {
         mWebView.restoreState(savedInstanceState);
     }
 
+    private String getSignature() {
+        // Allow intune's signature check
+        PackageHelper info = new PackageHelper(AuthenticationActivity.this);
+        String packageName = getCallingPackage();
+        if (!StringExtensions.IsNullOrBlank(packageName)) {
+            return info.getCurrentSignatureForPackage(mCallingPackage);
+        }
+
+        return "";
+    }
+
     private void setupWebView() {
 
         // Create the Web View to show the page
@@ -434,7 +445,8 @@ public class AuthenticationActivity extends Activity {
         // Intent should have a flag and activity is hosted inside broker
         return callingIntent != null
                 && !StringExtensions.IsNullOrBlank(callingIntent
-                        .getStringExtra(AuthenticationConstants.Broker.BROKER_REQUEST));
+                        .getStringExtra(AuthenticationConstants.Broker.BROKER_REQUEST))
+                && getSignature().equals(AuthenticationSettings.INSTANCE.getBrokerSignature());
     }
 
     /**
@@ -505,7 +517,7 @@ public class AuthenticationActivity extends Activity {
         mSpinner.setMessage(this.getText(this.getResources().getIdentifier("app_loading", "string",
                 this.getPackageName())));
     }
-    
+
     @Override
     protected void onRestart() {
         Logger.d(TAG, "AuthenticationActivity onRestart");
