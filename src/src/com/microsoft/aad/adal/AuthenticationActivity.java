@@ -298,7 +298,8 @@ public class AuthenticationActivity extends Activity {
         PackageHelper info = new PackageHelper(AuthenticationActivity.this);
         String packageName = getCallingPackage();
         if (!StringExtensions.IsNullOrBlank(packageName)) {
-            return info.getCurrentSignatureForPackage(mCallingPackage);
+            Logger.v(TAG, "Check signature for " + packageName);
+            return info.getCurrentSignatureForPackage(packageName);
         }
 
         return "";
